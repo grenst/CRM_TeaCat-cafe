@@ -4,6 +4,8 @@
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "isolatedModules": true,
+    "types": ["jest"]
   }
 }

@@ -3,6 +3,7 @@
   "include": ["src", "tests/telegraf.mock.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
+    "types": ["jest"],
     "rootDir": ".",
     "baseUrl": "./src",
     "outDir": "dist",
