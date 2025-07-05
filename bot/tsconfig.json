@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.base.json",
+  "include": ["src", "tests/telegraf.mock.ts"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "types": ["jest"],
+    "rootDir": ".",
+    "baseUrl": "./src",
+    "outDir": "dist",
+    "composite": true,
+    "isolatedModules": true
+  },
+  "references": [
+    { "path": "../worker" },
+    { "path": "../api" }
+  ]
+}
