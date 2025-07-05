@@ -1,4 +1,4 @@
-import { __mockReply } from 'telegraf';
+import { __mockReply, __mockOnText } from '../tests/telegraf.mock';
 import fastify, { FastifyInstance } from 'fastify';
 import { Queue } from 'bullmq';
 import { createBot } from './index';
@@ -10,41 +10,28 @@ jest.mock('bullmq', () => ({
   }))
 }));
 
-
 // Mock Telegraf
-jest.mock('telegraf', () => {
-  const __mockOnText = jest.fn();
-  const __mockReply = jest.fn(); // New mock for ctx.reply
-  
-  return {
-    Telegraf: jest.fn().mockImplementation(() => ({
-      telegram: {
-        setWebhook: jest.fn().mockResolvedValue(true),
-        sendMessage: jest.fn().mockResolvedValue(true)
-      },
-      launch: jest.fn(),
-      use: jest.fn(),
-      on: jest.fn().mockImplementation((event, handler) => {
-        if (event === 'text') __mockOnText.mockImplementation(handler);
-      }),
-      handleUpdate: jest.fn().mockImplementation(async (update) => {
-        // Simulate processing a text message
-        if (update?.message?.text) {
-          await __mockOnText({
-            message: update.message,
-            chat: { id: update.message.chat.id },
-            from: { id: update.message.from.id },
-            reply: __mockReply // Use the exposed mockReply
-          });
-        }
-        return true;
-      }),
-      webhookCallback: jest.fn().mockReturnValue(() => {})
-    })),
-    __mockOnText, // Export for testing
-    __mockReply // Export for testing
-  };
-});
+jest.mock('telegraf', () => ({
+  Telegraf: jest.fn().mockImplementation(() => ({
+    telegram: { setWebhook: jest.fn(), sendMessage: jest.fn() },
+    launch: jest.fn(),
+    use: jest.fn(),
+    on: jest.fn().mockImplementation((event, handler) => {
+      if (event === 'text') __mockOnText.mockImplementation(handler);
+    }),
+    handleUpdate: jest.fn().mockImplementation(async (update) => {
+      if (update?.message?.text) {
+        await __mockOnText({
+          message: update.message,
+          chat: { id: update.message.chat.id },
+          from: { id: update.message.from.id },
+          reply: __mockReply
+        });
+      }
+    }),
+    webhookCallback: jest.fn().mockReturnValue(() => {})
+  })),
+}));
 
 describe('Telegram webhook handler', () => {
   let server: FastifyInstance;
