@@ -6,7 +6,8 @@
     "rootDir": ".",
     "baseUrl": "./src",
     "outDir": "dist",
-    "composite": true
+    "composite": true,
+    "isolatedModules": true
   },
   "references": [
     { "path": "../worker" },

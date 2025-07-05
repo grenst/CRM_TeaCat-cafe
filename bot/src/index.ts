@@ -24,8 +24,13 @@ export function createBot(app: FastifyInstance): void {
 
   // Webhook setup
   app.post(`/telegram/${token}`, async (request, reply) => {
-    await bot.handleUpdate(request.body as any, reply.raw);
-    reply.code(200).send();
+    try {
+      await bot.handleUpdate(request.body as any, reply.raw);
+      reply.code(200).send({ status: 'ok' });
+    } catch (error) {
+      console.error('Error handling update:', error);
+      reply.code(500).send({ error: 'Internal server error' });
+    }
   });
 
   // Health check endpoint
@@ -49,8 +54,13 @@ export function createBot(app: FastifyInstance): void {
       return;
     }
 
-    await queue.add('process-message', jobData as TelegramMessage);
-    await ctx.reply('Message received and queued');
+    try {
+      await queue.add('process-message', jobData as TelegramMessage);
+      await ctx.reply('Message received and queued');
+    } catch (error) {
+      console.error('Failed to queue message:', error);
+      await ctx.reply('Error processing message');
+    }
   });
 
   // Initialize webhook on startup
