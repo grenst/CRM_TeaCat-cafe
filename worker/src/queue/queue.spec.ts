@@ -26,7 +26,7 @@ describe('messageQueue', () => {
       connection: messageQueue.opts.connection,
     });
 
-    const job = await messageQueue.add('test-job', { some: 'data' });
+    const job = await messageQueue.add('test-job', { some: 'data' }, { attempts: 3 });
 
     await new Promise<void>((resolve) => {
       worker.on('failed', (job: Job | undefined) => {
