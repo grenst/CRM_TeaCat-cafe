@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-import { Worker } from 'bullmq';
+import { Worker, Job } from 'bullmq';
 import { DataSource } from 'typeorm';
 import { franc } from 'franc';
 import Sentiment from 'sentiment';
 import { MessageEntity } from './entity/MessageEntity.js';
 
-const dataSource = new DataSource({
+export const dataSource = new DataSource({
   type: 'postgres',
   host: process.env.PG_HOST,
   port: parseInt(process.env.PG_PORT || '5432'),
@@ -16,19 +16,16 @@ const dataSource = new DataSource({
   synchronize: true
 });
 
-const worker = new Worker('new-message', async job => {
+export const defaultWorkerProcessor = async (job: Job) => {
   try {
     const { chatId, messageId, text } = job.data;
     
-    // Detect language
     const langCode = franc(text, { minLength: 3 });
     const language = langCode === 'und' ? 'unknown' : langCode;
     
-    // Analyze sentiment
     const sentiment = new Sentiment();
     const { score } = sentiment.analyze(text);
     
-    // Save to database
     const repo = dataSource.getRepository(MessageEntity);
     await repo.save({
       chatId,
@@ -41,9 +38,11 @@ const worker = new Worker('new-message', async job => {
     return { success: true };
   } catch (error) {
     console.error(`Failed processing message ${job.data.messageId}:`, error);
-    throw error; // Ensure BullMQ retry logic works
+    throw error;
   }
-}, {
+};
+
+export const worker = new Worker('new-message', defaultWorkerProcessor, {
   connection: {
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379')
