@@ -4,6 +4,6 @@ import { MetricsGateway } from './metrics.gateway';
 
 @Module({
   controllers: [MetricsController],
-  providers: [MetricsGateway]
+  providers: [MetricsGateway],
 })
 export class MetricsModule {}
