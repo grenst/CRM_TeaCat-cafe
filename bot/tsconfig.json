@@ -12,6 +12,5 @@
   },
   "references": [
     { "path": "../worker" },
-    { "path": "../api" }
   ]
 }
