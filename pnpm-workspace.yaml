@@ -1,0 +1,6 @@
+packages:
+  - 'bot'
+  - 'worker'
+  - 'api'
+  - 'dashboard'
+  - 'infra'

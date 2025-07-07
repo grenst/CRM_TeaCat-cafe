@@ -1,0 +1,17 @@
+{
+  "name": "@my-workspace/bot",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "bullmq": "^5.56.1",
+    "fastify": "^5.4.0",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10"
+  }
+}
