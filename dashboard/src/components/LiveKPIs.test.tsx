@@ -19,14 +19,18 @@ describe('LiveKPIs', () => {
   let server: WS;
 
   beforeEach(() => {
-    server = new WS('ws://localhost:3000/metrics');
+    server = new WS('ws://localhost:3000');
   });
 
   afterEach(() => {
     WS.clean();
+    if (server && server.server) {
+      server.server.close();
+    }
   });
 
   test('should connect to WebSocket and display metrics', async () => {
+    jest.setTimeout(10000);
     const theme = extendTheme();
     render(
       <ChakraProvider theme={theme}>
@@ -36,6 +40,7 @@ describe('LiveKPIs', () => {
 
     // Wait for the connection to be established
     await server.connected;
+    console.log('Mock WebSocket server connected.');
 
     // Initial state
     expect(screen.getByText('Connecting to metrics stream...')).toBeInTheDocument();

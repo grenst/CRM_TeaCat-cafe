@@ -23,7 +23,7 @@ const LiveKPIs: React.FC = () => {
   useEffect(() => {
     // Only create a new WebSocket if one doesn't already exist
     if (!wsRef.current) {
-      const ws = new WebSocket('ws://localhost:3000/metrics');
+      const ws = new WebSocket('ws://localhost:3000');
       wsRef.current = ws;
 
       ws.onopen = () => {
