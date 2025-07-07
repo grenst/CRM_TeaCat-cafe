@@ -17,8 +17,14 @@ function createBot(app) {
     });
     // Webhook setup
     app.post(`/telegram/${token}`, async (request, reply) => {
-        await bot.handleUpdate(request.body, reply.raw);
-        reply.code(200).send();
+        try {
+            await bot.handleUpdate(request.body, reply.raw);
+            reply.code(200).send({ status: 'ok' });
+        }
+        catch (error) {
+            console.error('Error handling update:', error);
+            reply.code(500).send({ error: 'Internal server error' });
+        }
     });
     // Health check endpoint
     app.get('/healthz', (_, reply) => {
@@ -37,8 +43,14 @@ function createBot(app) {
         if (!jobData.chatId || !jobData.fromId) {
             return;
         }
-        await queue.add('process-message', jobData);
-        await ctx.reply('Message received and queued');
+        try {
+            await queue.add('process-message', jobData);
+            await ctx.reply('Message received and queued');
+        }
+        catch (error) {
+            console.error('Failed to queue message:', error);
+            await ctx.reply('Error processing message');
+        }
     });
     // Initialize webhook on startup
     app.addHook('onReady', async () => {

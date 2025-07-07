@@ -3,6 +3,7 @@
   "include": ["src"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
+    "composite": true,
     "rootDir": ".",
     "baseUrl": "./src",
     "experimentalDecorators": true,
